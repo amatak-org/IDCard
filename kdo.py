@@ -61,6 +61,7 @@ def create_id_card_front(full_name, position, id_number, address, photo_path, is
     # Load front side background image
     background = Image.open("images/front_background.jpg")  # Replace with your front background image
     background = background.resize((CARD_WIDTH, CARD_HEIGHT))  # Resize to card size
+    background = round_corners(background, radius=30)  # Apply rounded corners to the background
 
     # Load user photo
     user_photo = Image.open(photo_path).resize((200, 200))
@@ -78,7 +79,6 @@ def create_id_card_front(full_name, position, id_number, address, photo_path, is
     draw.text((300, 180), f"Address: {address}", fill="white", font=font)
     draw.text((50, 570), f"Issue Date: {issue_date}", fill="white", font=font)
     draw.text((650, 570), f"Valid Until: {validity_date}", fill="white", font=font)
-    
 
     # Generate and add barcode (under the photo)
     barcode_img = generate_barcode(id_number)
@@ -92,29 +92,29 @@ def create_id_card_back():
     # Load back side background image
     background = Image.open("images/back_background.jpg")  # Replace with your back background image
     background = background.resize((CARD_WIDTH, CARD_HEIGHT))  # Resize to card size
+    background = round_corners(background, radius=30)  # Apply rounded corners to the background
 
     draw = ImageDraw.Draw(background)
 
     # Add magnetic strip (black rectangle at the top)
-    magnetic_strip_height = 50
-    draw.rectangle([(0, 0), (CARD_WIDTH, magnetic_strip_height)], fill="black")
+    magnetic_strip_height = 100
+    draw.rectangle([(0, 50), (CARD_WIDTH, magnetic_strip_height)], fill="black")
 
     # Add text to the magnetic strip
     font = ImageFont.truetype("arial.ttf", 20)
-    draw.text((10, 15), "Magnetic Strip (For Digital Data Storage)", fill="white", font=font)
+    draw.text((50, 15), "Magnetic Strip (For Digital Data Storage)", fill="white", font=font)
 
     # Add back side content below the magnetic strip
     font = ImageFont.truetype("arial.ttf", 30)
-    draw.text((50, 70), "KHMER DEMOCRACY ORGANIZATION(KDO) INC.", fill="white", font=font)
-    draw.text((50, 120), "Terms of Use:", fill="white", font=font)
-    draw.text((50, 170), "1. This card is property of the KDO.", fill="white", font=font)
-    draw.text((50, 220), "2. If found, please return to:", fill="white", font=font)
-    draw.text((50, 270), "Lost & Return Address:", fill="white", font=font)
-    draw.text((50, 320), "6 Temple CT Noble Park St, Melbourne, VIC 3174", fill="white", font=font)
-    draw.text((50, 370), "Contact: +61 0395444950", fill="white", font=font)
+    draw.text((50, 120), "KHMER DEMOCRACY ORGANIZATION(KDO) INC.", fill="white", font=font)
+    draw.text((50, 170), "Terms of Use:", fill="white", font=font)
+    draw.text((50, 220), "1. This card is property of the KDO.", fill="white", font=font)
+    draw.text((50, 270), "2. If found, please return to:", fill="white", font=font)
+    draw.text((50, 320), "Lost & Return Address:", fill="white", font=font)
+    draw.text((50, 370), "6 Temple CT Noble Park St, Melbourne, VIC 3174", fill="white", font=font)
+    draw.text((50, 500), "Contact: +61 0395444950", fill="white", font=font)
     draw.text((50, 570), "Website: kdo.org.au", fill="white", font=font)
     draw.text((650, 570), "ABN: 43 435 683 952", fill="white", font=font)
-    
 
     return background
 
