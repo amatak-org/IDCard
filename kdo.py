@@ -50,7 +50,7 @@ def generate_barcode(id_number):
         if item[:3] == (255, 255, 255):  # Check if the pixel is white
             new_data.append((255, 255, 255, 0))  # Make it transparent
         else:
-            new_data.append(item)
+            new_data.append((255, 255, 255, 255))  # Make black pixels white
 
     barcode_img.putdata(new_data)
     os.remove(f"{barcode_path}.png")  # Delete the temporary barcode file
@@ -72,7 +72,7 @@ def create_id_card_front(full_name, dob, position, id_number, address, photo_pat
 
     # Draw text on the image
     draw = ImageDraw.Draw(background)
-    font = ImageFont.truetype("arial.ttf", 30)  # Use a custom font
+    font = ImageFont.truetype("arial.ttf", 28)  # Use a custom font
     draw.text((300, 60), f"Name: {full_name}", fill="white", font=font)
     draw.text((300, 100), f"DOB: {dob}", fill="white", font=font)  # Add date of birth
     draw.text((300, 140), f"Position: {position}", fill="white", font=font)  # Add position
@@ -106,13 +106,13 @@ def create_id_card_back():
     draw.text((50, 15), "Magnetic Strip (For Digital Data Storage)", fill="white", font=font)
 
      # Add back side content below the magnetic strip
-    font = ImageFont.truetype("arial.ttf", 30)
+    font = ImageFont.truetype("arial.ttf", 28)
     draw.text((50, 120), "KHMER DEMOCRACY ORGANIZATION(KDO) INC.", fill="white", font=font)
     draw.text((50, 170), "Terms of Use:", fill="white", font=font)
     draw.text((50, 220), "1. This card is property of the KDO.", fill="white", font=font)
     draw.text((50, 270), "2. If found, please return to:", fill="white", font=font)
-    draw.text((50, 320), "Lost & Return Address:", fill="white", font=font)
-    draw.text((50, 370), "6 Temple CT Noble Park St, Melbourne, VIC 3174", fill="white", font=font)
+    draw.text((50, 320), "HQ Office at:", fill="white", font=font)
+    draw.text((50, 370), "6 Temple CT,Noble Park,VIC 3174, Australia.", fill="white", font=font)
     draw.text((50, 500), "Contact: +61 0395444950", fill="white", font=font)
     draw.text((50, 570), "Website: kdo.org.au", fill="white", font=font)
     draw.text((650, 570), "ABN: 43 435 683 952", fill="white", font=font)
