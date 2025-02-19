@@ -57,7 +57,7 @@ def generate_barcode(id_number):
     return barcode_img
 
 # Function to create the ID card (front side)
-def create_id_card_front(full_name, position, id_number, address, photo_path, issue_date, validity_date):
+def create_id_card_front(full_name, dob, position, id_number, address, photo_path, issue_date, validity_date):
     # Load front side background image
     background = Image.open("images/front_background.jpg")  # Replace with your front background image
     background = background.resize((CARD_WIDTH, CARD_HEIGHT))  # Resize to card size
@@ -74,9 +74,10 @@ def create_id_card_front(full_name, position, id_number, address, photo_path, is
     draw = ImageDraw.Draw(background)
     font = ImageFont.truetype("arial.ttf", 30)  # Use a custom font
     draw.text((300, 60), f"Name: {full_name}", fill="white", font=font)
-    draw.text((300, 100), f"Position: {position}", fill="white", font=font)  # Add position
-    draw.text((300, 140), f"ID: {id_number}", fill="white", font=font)
-    draw.text((300, 180), f"Address: {address}", fill="white", font=font)
+    draw.text((300, 100), f"DOB: {dob}", fill="white", font=font)  # Add date of birth
+    draw.text((300, 140), f"Position: {position}", fill="white", font=font)  # Add position
+    draw.text((300, 180), f"ID: {id_number}", fill="white", font=font)
+    draw.text((300, 220), f"Address: {address}", fill="white", font=font)
     draw.text((50, 570), f"Issue Date: {issue_date}", fill="white", font=font)
     draw.text((650, 570), f"Valid Until: {validity_date}", fill="white", font=font)
 
@@ -96,7 +97,7 @@ def create_id_card_back():
 
     draw = ImageDraw.Draw(background)
 
-    # Add magnetic strip (black rectangle at the top)
+      # Add magnetic strip (black rectangle at the top)
     magnetic_strip_height = 100
     draw.rectangle([(0, 50), (CARD_WIDTH, magnetic_strip_height)], fill="black")
 
@@ -104,7 +105,7 @@ def create_id_card_back():
     font = ImageFont.truetype("arial.ttf", 20)
     draw.text((50, 15), "Magnetic Strip (For Digital Data Storage)", fill="white", font=font)
 
-    # Add back side content below the magnetic strip
+     # Add back side content below the magnetic strip
     font = ImageFont.truetype("arial.ttf", 30)
     draw.text((50, 120), "KHMER DEMOCRACY ORGANIZATION(KDO) INC.", fill="white", font=font)
     draw.text((50, 170), "Terms of Use:", fill="white", font=font)
@@ -118,15 +119,17 @@ def create_id_card_back():
 
     return background
 
+
 # Function to generate the ID card
 def generate_id_card():
     # Get user inputs
     full_name = entry_name.get()
+    dob = entry_dob.get()  # Get date of birth
     position = entry_position.get()  # Get member position
     address = entry_address.get()
     photo_path = entry_photo.get()
 
-    if not full_name or not position or not address or not photo_path:
+    if not full_name or not dob or not position or not address or not photo_path:
         messagebox.showerror("Error", "Please fill all fields and select a photo.")
         return
 
@@ -136,7 +139,7 @@ def generate_id_card():
     validity_date = (datetime.now() + timedelta(days=365)).strftime("%Y-%m-%d")
 
     # Create front and back sides of the ID card
-    front_side = create_id_card_front(full_name, position, id_number, address, photo_path, issue_date, validity_date)
+    front_side = create_id_card_front(full_name, dob, position, id_number, address, photo_path, issue_date, validity_date)
     back_side = create_id_card_back()
 
     # Save the ID card images
@@ -211,19 +214,23 @@ Label(root, text="Full Name:").grid(row=0, column=0, padx=10, pady=10)
 entry_name = Entry(root, width=30)
 entry_name.grid(row=0, column=1, padx=10, pady=10)
 
-Label(root, text="Position:").grid(row=1, column=0, padx=10, pady=10)  # Add position field
+Label(root, text="Date of Birth (DOB):").grid(row=1, column=0, padx=10, pady=10)  # Add DOB field
+entry_dob = Entry(root, width=30)
+entry_dob.grid(row=1, column=1, padx=10, pady=10)
+
+Label(root, text="Position:").grid(row=2, column=0, padx=10, pady=10)  # Add position field
 entry_position = Entry(root, width=30)
-entry_position.grid(row=1, column=1, padx=10, pady=10)
+entry_position.grid(row=2, column=1, padx=10, pady=10)
 
-Label(root, text="Address:").grid(row=2, column=0, padx=10, pady=10)
+Label(root, text="Address:").grid(row=3, column=0, padx=10, pady=10)
 entry_address = Entry(root, width=30)
-entry_address.grid(row=2, column=1, padx=10, pady=10)
+entry_address.grid(row=3, column=1, padx=10, pady=10)
 
-Label(root, text="Photo:").grid(row=3, column=0, padx=10, pady=10)
+Label(root, text="Photo:").grid(row=4, column=0, padx=10, pady=10)
 entry_photo = Entry(root, width=30)
-entry_photo.grid(row=3, column=1, padx=10, pady=10)
-Button(root, text="Browse", command=select_photo).grid(row=3, column=2, padx=10, pady=10)
+entry_photo.grid(row=4, column=1, padx=10, pady=10)
+Button(root, text="Browse", command=select_photo).grid(row=4, column=2, padx=10, pady=10)
 
-Button(root, text="Generate ID Card", command=generate_id_card).grid(row=4, column=1, pady=20)
+Button(root, text="Generate ID Card", command=generate_id_card).grid(row=5, column=1, pady=20)
 
 root.mainloop()
