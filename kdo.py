@@ -14,9 +14,9 @@ from barcode.writer import ImageWriter
 CARD_WIDTH = 1010  # 85.6 mm * 300 DPI / 25.4 mm/inch
 CARD_HEIGHT = 637   # 54 mm * 300 DPI / 25.4 mm/inch
 
-# Function to generate a 10-digit unique ID
+# Function to generate a 9-digit unique ID
 def generate_id():
-    return ''.join(random.choices('0123456789', k=10))
+    return ''.join(random.choices('0123456789', k=9))
 
 # Function to create rounded corners for the ID card
 def round_corners(image, radius=30):
@@ -135,8 +135,8 @@ def generate_id_card():
 
     # Generate ID, validity date, and issue date
     id_number = generate_id()
-    issue_date = datetime.now().strftime("%Y-%m-%d")
-    validity_date = (datetime.now() + timedelta(days=365)).strftime("%Y-%m-%d")
+    issue_date = datetime.now().strftime("%d-%m-%Y")
+    validity_date = (datetime.now() + timedelta(days=1825)).strftime("%d-%m-%Y")
 
     # Create front and back sides of the ID card
     front_side = create_id_card_front(full_name, dob, position, id_number, address, photo_path, issue_date, validity_date)
