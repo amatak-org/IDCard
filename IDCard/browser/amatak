@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+import argparse
+from flask import Flask, render_template_string, request, redirect, url_for
+import webbrowser
+import threading
+import time
+import subprocess
+import os
+import sys
+print("Python Path:", sys.executable)
+
+app = Flask(__name__)
+
+# In-memory storage for server logs (for demonstration purposes)
+server_logs = []
+
+# Path to the idcard.py script (update this to the correct path)
+IDCARD_SCRIPT_PATH = os.path.join(os.path.dirname(__file__), "idcard.py")
+
+@app.route("/")
+def home():
+    return "Welcome to the Amatak Server!"
+
+@app.route("/admin")
+def admin_panel():
+    """
+    Admin panel route to display server logs and controls.
+    """
+    return render_template_string(
+        """
+        <h1>Amatak Admin Panel</h1>
+        <h2>Server Logs</h2>
+        <ul>
+            {% for log in logs %}
+                <li>{{ log }}</li>
+            {% endfor %}
+        </ul>
+        <h2>Actions</h2>
+        <form action="/admin/restart" method="post">
+            <button type="submit">Restart Server</button>
+        </form>
+        <form action="/admin/start-idcard" method="post">
+            <button type="submit">Start ID Card Generator</button>
+        </form>
+        """,
+        logs=server_logs,
+    )
+
+@app.route("/admin/restart", methods=["POST"])
+def restart_server():
+    """
+    Simulates a server restart by adding a log entry.
+    """
+    server_logs.append(f"Server restarted at {time.ctime()}")
+    return "Server restarted! <a href='/admin'>Go back to Admin Panel</a>"
+
+@app.route("/admin/start-idcard", methods=["POST"])
+def start_idcard():
+    """
+    Starts the idcard.py script.
+    """
+    try:
+        # Use "python" instead of "python3" on Windows
+        subprocess.Popen(["python", IDCARD_SCRIPT_PATH])
+        server_logs.append(f"Started idcard.py at {time.ctime()}")
+        return "ID Card Generator started! <a href='/admin'>Go back to Admin Panel</a>"
+    except Exception as e:
+        server_logs.append(f"Failed to start idcard.py: {str(e)}")
+        return f"Error: {str(e)} <a href='/admin'>Go back to Admin Panel</a>"
+
+def start_server(port=7000):
+    """
+    Starts the Amatak web server and opens the default web browser.
+    """
+    # Add a log entry when the server starts
+    server_logs.append(f"Server started at {time.ctime()} on port {port}")
+
+    # Start the Flask server in a separate thread
+    threading.Thread(target=app.run, kwargs={"port": port}).start()
+
+    # Open the web browser
+    url = f"http://localhost:{port}/admin"
+    print(f"Server started at {url}")
+    webbrowser.open(url)
+
+def main():
+    """
+    Main function to handle CLI commands.
+    """
+    parser = argparse.ArgumentParser(description="Amatak CLI")
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+
+    # Command: start
+    start_parser = subparsers.add_parser("start", help="Start the Amatak server")
+    start_parser.add_argument(
+        "-p", "--port", type=int, default=7000, help="Port to run the server on"
+    )
+
+    # Parse the arguments
+    args = parser.parse_args()
+
+    if args.command == "start":
+        start_server(port=args.port)
+    else:
+        parser.print_help()
+
+if __name__ == "__main__":
+    main()
